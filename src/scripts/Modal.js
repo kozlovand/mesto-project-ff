@@ -1,31 +1,30 @@
-export {openModal, closeModal, popapCloseEsc, popapCloseOverlay};
+export {openModal, closeModal, closePupupEsc, closePopupOverlay};
 
 //--Открытие попапа 
-  function openModal(popap) {
-    popap.classList.add('popup_is-opened');
-    popapCloseEsc(popap);
-    popapCloseOverlay(popap);
+  function openModal(popup) {
+    popup.classList.add('popup_is-opened');
+    document.addEventListener('keydown', closePupupEsc);
+    popup.addEventListener('click', closePopupOverlay);
   };
 
 //--Закрытие попапа
-  function closeModal(popap){
-    popap.classList.remove('popup_is-opened');
+  function closeModal(popup){
+    popup.classList.remove('popup_is-opened');
+    document.removeEventListener('keydown', closePupupEsc);
+    popup.removeEventListener('click', closePopupOverlay);
   };
 
 //--Закрытие на Esc
-  function popapCloseEsc(popap){
-    document.addEventListener('keydown', (evt)=>{
+  function closePupupEsc(evt){
       if (evt.key ==='Escape'){
-        closeModal(popap);
+        const popupOpen = document.querySelector('.popup_is-opened');
+        closeModal(popupOpen);
       }
-    })
-  };
+    };
 
 //--Закрытие на Оверлей
-  function popapCloseOverlay(popap){
-    popap.addEventListener("click", (evt) => {
+  function closePopupOverlay(evt){
       if (evt.currentTarget === evt.target) {
-        closeModal(popap);
+        closeModal(evt.currentTarget);
       }
-    })
   };

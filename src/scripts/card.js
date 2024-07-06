@@ -1,4 +1,3 @@
-import { cardTemplate } from '../index.js';
 
 //--Лайк карточки
 export function cardLike (evt){
@@ -12,7 +11,8 @@ export function deleteCard(cardElement){
 }
 
 //--Создание карточки
-export function addCards(card, delCallback, likeCallback, openCallback) {
+export function createCard(card, delCallback, likeCallback, openCallback) {
+  const cardTemplate = document.querySelector('#card-template').content;
   const cardElement = cardTemplate.querySelector('.card').cloneNode(true);
   const deleteButton = cardElement.querySelector('.card__delete-button');
   const cardImage = cardElement.querySelector('.card__image');
@@ -30,7 +30,7 @@ export function addCards(card, delCallback, likeCallback, openCallback) {
   });
 
   cardImage.addEventListener('click', function(){
-    openCallback(cardImage, cardTitle)
+    openCallback(card);
   })
 
   return cardElement;
