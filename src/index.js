@@ -5,6 +5,11 @@ import { createCard, deleteCard, cardLike } from './scripts/card.js';
 import { openModal, closeModal } from './scripts/Modal.js';
 import { initialCards } from './scripts/cards.js'
 
+import {enableValidation, clearValidation, validationConfig} from './scripts/validation.js';
+import { loadUserInfo, uploadUserInfo, getUserCards, uploadUserCard} from './scripts/api.js';
+
+
+
 const content = document.querySelector('.content');
 const cardList = content.querySelector('.places__list');
 
@@ -29,17 +34,50 @@ const popupImage = document.querySelector('.popup__image');
 const popupText = document.querySelector('.popup__caption');
 const popupAll = document.querySelector('.popup');
 
-//--Добавление карточек из массива
-initialCards.forEach(card =>  { 
-  cardList.append(createCard(card, deleteCard, cardLike, openImage));
-});
+let myId;
+
+const infoProfile = {
+  name:profileName,
+  about:profileDescr
+}
+
+
+
+
+// getUserCards()  
+//   .then(cards => {
+//     cards.forEach(card => {
+//     cardList.append(createCard(card, deleteCard, cardLike, openImage, myId));
+//     })
+//   })
+//   .catch(err => {
+//     console.log(err)
+//   })
+
+
+function renderProfile(data) {
+  console.log(data);
+  profileName.textContent = data.name;
+  profileDescr.textContent = data.about;
+}
 
 //--Отправка формы изменения данных аккаунта
 function formEditSubmit(evt) {
     evt.preventDefault();
-    profileName.textContent = name.value;
-    profileDescr.textContent = description.value ;
-    closeModal(popupEdit);
+
+    const info = {
+      name: name.value,
+      about: description.value
+    }
+    uploadUserInfo(info)
+      .then((res) => {
+        return res.json()
+      })
+      .then(data => {
+        renderProfile(data);
+        closeModal(popupEdit);
+      })
+
 }
 // Прикрепляем обработчик к форме:
 // он будет следить за событием “submit” - «отправка»
@@ -59,7 +97,11 @@ formNewCard.addEventListener('submit', function(evt) {
   card.name = cardName.value;
   card.link = cardUrl.value;
   evt.preventDefault();
-  cardList.prepend(createCard(card, deleteCard, cardLike, openImage));
+  uploadUserCard(card);
+  console.log(card);
+  
+  cardList.prepend(createCard(card, deleteCard, cardLike, openImage, myId));
+  
   formNewCard.reset();
   closeModal(popupNewCard);
 })
@@ -69,6 +111,7 @@ btnEdit.addEventListener('click',function(){
   openModal(popupEdit);
   name.value = profileName.textContent ;
   description.value = profileDescr.textContent;
+  clearValidation(popupEdit, validationConfig);
 });
 
 btnClosePopupEdit.addEventListener('click',function(){
@@ -83,6 +126,7 @@ btnAddCard.addEventListener('click', function(){
 
 btnClosePopupNewCard.addEventListener('click', function(){
     closeModal(popupNewCard);
+    clearValidation(popupNewCard, validationConfig);
 });
 
 btnClosePopupImage.addEventListener('click', function(){
@@ -90,8 +134,24 @@ btnClosePopupImage.addEventListener('click', function(){
 });
 
 
+enableValidation(validationConfig);
 
 
+Promise.all([loadUserInfo(), getUserCards()])
+  .then(([result1, value2]) => {
+    //--Добавление информации с сервера
+        myId = result1._id;
+        infoProfile.name.textContent = result1.name;
+        infoProfile.about.textContent = result1.about;
+        
+        console.log(value2);
+    //--Добавление карточек c сервера
+        value2.forEach(card => {
+        cardList.append(createCard(card, deleteCard, cardLike, openImage, myId));
+        
+          })
+      })
 
-
-
+  .catch((err) => {
+    console.log(err)
+})

@@ -1,4 +1,4 @@
-
+import { deleteUserCard } from "./api";
 //--Лайк карточки
 export function cardLike (evt){
   if (evt.target.classList.contains('card__like-button')){
@@ -7,11 +7,11 @@ export function cardLike (evt){
 };
 //--Удаление карточки
 export function deleteCard(cardElement){
-  cardElement.remove();
+  cardElement.remove();  
 }
 
 //--Создание карточки
-export function createCard(card, delCallback, likeCallback, openCallback) {
+export function createCard(card, delCallback, likeCallback, openCallback, myId) {
   const cardTemplate = document.querySelector('#card-template').content;
   const cardElement = cardTemplate.querySelector('.card').cloneNode(true);
   const deleteButton = cardElement.querySelector('.card__delete-button');
@@ -21,9 +21,14 @@ export function createCard(card, delCallback, likeCallback, openCallback) {
   cardImage.alt = card.name;
   cardTitle.textContent = card.name;
 
-  deleteButton.addEventListener('click', function(){
-    delCallback(cardElement);
-  }); 
+  if (card.owner._id === myId) {
+    deleteButton.addEventListener('click', function(){
+      delCallback(cardElement);
+      deleteUserCard(card);
+    }); 
+  } else {
+    deleteButton.remove();
+  };
 
   cardElement.addEventListener('click', function(evt){
     likeCallback(evt)
