@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "description": "https://github.com/kozlovand/mesto-project-ff.git",
   "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kozlovand/mesto-project-ff.git"
+  },
   "scripts": {
     "build": "webpack --mode production",
     "dev": "webpack serve",
