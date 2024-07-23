@@ -31,7 +31,6 @@ export function cardLike (evt, cardLikeCount,card, count){
 export function deleteCard(cardElement){
   cardElement.remove();  
 }
-
 //--Создание карточки
 export function createCard(card, delCallback, likeCallback, openCallback, myId, popupDeleteCard) {
   const cardTemplate = document.querySelector('#card-template').content;

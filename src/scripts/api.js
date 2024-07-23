@@ -104,6 +104,7 @@ export const deletelikeUserCard = function(card) {
   })
 };
 
+//--Отправка аватара на сервер
 export const uploadUseravatar = function(avatar) {
   return fetch(`${config.baseUrl}/users/me/avatar`, {
     method: 'PATCH',
