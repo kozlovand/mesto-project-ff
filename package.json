@@ -1,7 +1,7 @@
 {
   "name": "mesto-project-ff",
   "version": "1.0.0",
-  "description": "https://github.com/kozlovand/mesto-project-ff.git",
+  "description": "mesto-project",
   "main": "index.js",
   "repository": {
     "type": "git",
