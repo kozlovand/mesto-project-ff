@@ -15,7 +15,7 @@
   </header>
   <main class="content">
     <section class="profile page__section">
-      <div class="profile__image" style="background-image: url('<%=require('./images/avatar.jpg')%>');"></div>
+      <div class="profile__image"></div>
       <div class="profile__info">
         <h1 class="profile__title"></h1>
         <button class="profile__edit-button" type="button"></button>
@@ -33,6 +33,7 @@
       © 2021 Mesto Russia
     </p>
   </footer>
+
   <div class="popup popup_type_edit popup_is-animated">
     <div class="popup__content">
       <button type="button" class="popup__close"></button>
@@ -47,6 +48,7 @@
       </form>
     </div>
   </div>
+
   <div class="popup popup_type_new-card popup_is-animated">
     <div class="popup__content">
       <button type="button" class="popup__close"></button>
@@ -54,14 +56,33 @@
       <form class="popup__form" name="new-place">
         <input type="text" name="place-name" id="place-input" class="popup__input popup__input_type_card-name" placeholder="Название" required minlength="2" maxlength="30" required pattern="^[a-zA-Zа-яёА-ЯЁ\-\s]+$" data-error-message ="Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы">
         <span class="place-input-error"></span>
-
-
         <input type="url" name="link" id="link-input" class="popup__input popup__input_type_url" placeholder="Ссылка на картинку" required>
         <span class="link-input-error"></span>
         <button type="submit" class="button popup__button">Сохранить</button>
       </form>
     </div>
   </div>
+
+  <div class="popup popup_type_new-avatar popup_is-animated">
+    <div class="popup__content">
+      <button type="button" class="popup__close"></button>
+      <h3 class="popup__title">Обновить аватар</h3>
+      <form class="popup__form" name="new-avatar">
+        <input type="url" name="link" id="link-input" class="popup__input popup__input_type_url-avatar" placeholder="Ссылка на картинку" required>
+        <span class="link-input-error"></span>
+        <button type="submit" class="button popup__button">Сохранить</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="popup popup_type_delete-card popup_is-animated">
+    <div class="popup__content">
+      <button type="button" class="popup__close"></button>
+      <h3 class="popup__title">Вы уверены?</h3>
+        <button type="button" class="button popup__button popup__button_delete-card">Да</button>
+    </div>
+  </div>
+
   <div class="popup popup_type_image popup_is-animated">
     <div class="popup__content popup__content_content_image">
       <button type="button" class="popup__close"></button>
@@ -82,7 +103,7 @@
       </h2>
       <div class="card__like">
         <button type="button" class="card__like-button"></button>
-        <span class="card__like-count">0</span>
+        <span class="card__like-count"></span>
       </div>
     </div>
   </li>

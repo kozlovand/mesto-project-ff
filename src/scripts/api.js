@@ -1,4 +1,3 @@
-import { initialCards } from "./cards";
 
 const config = {
   baseUrl:'https://nomoreparties.co/v1/wff-cohort-19',
@@ -35,6 +34,9 @@ export const uploadUserInfo = function(info){
       name: info.name,
       about: info.about,
     })
+  })
+  .then(res => {
+    return checkAnswer(res)
   });
 } 
 
@@ -58,6 +60,9 @@ export const uploadUserCard = function(card) {
       link: card.link,
     })
   })
+    .then(res => {
+      return checkAnswer(res)
+    })
 }
 
 //--Удаление карточки с сервера
@@ -66,7 +71,52 @@ export const deleteUserCard = function(card) {
     method: 'DELETE',
     headers: config.headers
   })
+  .then(res => {
+    return checkAnswer(res)
+  })
+  .catch(err => {
+    console.log(err)
+  })
+};
+
+//--Отправка лайка карточки на сервер
+export const likeUserCard = function(card) {
+  return fetch(`${config.baseUrl}/cards/likes/${card._id}`, {
+    method: 'PUT',
+    headers: config.headers,
+    body: JSON.stringify({
+      likes: card.likes,
+    })
+  })
+  .then(res => {
+    return checkAnswer(res)
+  })
+};
+
+//--Удаление лайка карточки с сервера
+export const deletelikeUserCard = function(card) {
+  return fetch(`${config.baseUrl}/cards/likes/${card._id}`, {
+    method: 'DELETE',
+    headers: config.headers
+  })
+  .then(res => {
+    return checkAnswer(res)
+  })
+};
+
+export const uploadUseravatar = function(avatar) {
+  return fetch(`${config.baseUrl}/users/me/avatar`, {
+    method: 'PATCH',
+    headers: config.headers,
+    body: JSON.stringify({
+      avatar: avatar,
+    })
+  })
+    .then(res => {
+      return checkAnswer(res)
+    });
 }
+
 
 
 
