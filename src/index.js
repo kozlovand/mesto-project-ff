@@ -1,24 +1,15 @@
 
 import './pages/index.css';
 
-import { createCard, deleteCard, cardLike } from './scripts/card.js';
+import { createCard } from './scripts/card.js';
 import { openModal, closeModal } from './scripts/Modal.js';
-
+import { deleteUserCard, likeUserCard, deletelikeUserCard} from "./scripts/api.js";
 import {enableValidation, clearValidation, validationConfig} from './scripts/validation.js';
 import { loadUserInfo, uploadUserInfo, getUserCards, uploadUserCard, uploadUseravatar} from './scripts/api.js';
 
-
-
 const content = document.querySelector('.content');
 const cardList = content.querySelector('.places__list');
-
 const btnEdit = document.querySelector('.profile__edit-button');
-const btnClosePopupEdit = document.querySelector('.popup_type_edit').querySelector('.popup__close');
-const btnClosePopupNewCard = document.querySelector('.popup_type_new-card').querySelector('.popup__close');
-const btnClosePopupImage = document.querySelector('.popup_type_image').querySelector('.popup__close');
-const btnClosePopupAvatar = document.querySelector('.popup_type_new-avatar').querySelector('.popup__close');
-const btnClosePopupDeleteCard = document.querySelector('.popup_type_delete-card').querySelector('.popup__close');
-
 const popupEdit = document.querySelector('.popup_type_edit');
 const formEdit = popupEdit.querySelector('.popup__form');
 const name = formEdit.elements.name;
@@ -39,8 +30,72 @@ const formNewAvatar = popupNewAvatar.querySelector('.popup__form');
 const avatarUrl = document.querySelector('.popup__input_type_url-avatar')
 const popupDeleteCard =document.querySelector('.popup_type_delete-card');
 let myId;
+let cardInfoToDelete;
+let cardElementToDelete;
 
 enableValidation(validationConfig);
+
+//--Слушатели на все крестики закрытия
+const closeButtons = document.querySelectorAll('.popup__close');
+closeButtons.forEach((button) => {
+  const popup = button.closest('.popup');
+  button.addEventListener('click', () => closeModal(popup));
+});
+
+//--Лайк карточки
+function likeCard (evt, cardLikeCount,card, count){
+  function countLike(result) {
+    count = result.likes.length;
+    cardLikeCount.textContent = count;
+  }
+  if (evt.target.classList.contains('card__like-button')){
+    if (evt.target.classList.contains('card__like-button_is-active')) {
+      deletelikeUserCard(card)
+        .then(result => {
+          countLike(result)
+          evt.target.classList.remove('card__like-button_is-active');
+        })
+        .catch(err => {
+          console.log(err)
+        })
+    } else  {
+      
+      likeUserCard(card)
+        .then(result => {
+          countLike(result)
+          evt.target.classList.add('card__like-button_is-active');
+        })
+        .catch(err => {
+          console.log(err)
+        })
+    }}
+};
+
+
+
+//--Попап удаления карточки
+function openPopupDeleteCard(card, cardElement){
+  cardInfoToDelete = card;
+  cardElementToDelete = cardElement
+  openModal(popupDeleteCard);
+};
+
+//--Обработка запроса на удалениe
+function handlePopupDeleteSubmit(cardInfoToDelete, cardElementToDelete) {
+  deleteUserCard(cardInfoToDelete)
+    .then(() => {
+      cardElementToDelete.remove();  ;
+      closeModal(popupDeleteCard);
+    })
+    .catch(err => {
+      console.log(err)
+    });
+
+};
+
+popupDeleteCard.querySelector('.popup__button_delete-card').addEventListener('click', function () {
+  handlePopupDeleteSubmit(cardInfoToDelete, cardElementToDelete);
+} )
 
 //--Загрузка
 function loading(isLoading,form) {
@@ -61,7 +116,7 @@ function renderProfile(data) {
 //--Отрисовка карточек
 function renderCard(data) {
   data.forEach(card => {
-    cardList.append(createCard(card, deleteCard, cardLike, openImage, myId, popupDeleteCard));
+    cardList.append(createCard(card, likeCard, openImage, myId, openPopupDeleteCard));
       })
 };
 
@@ -74,7 +129,7 @@ function openImage(card){
 };
 
 //--Отправка формы изменения аватарки
-function formEditAvatar(evt) {
+function handleAvatarFormSubmit(evt) {
   evt.preventDefault();
 
   loading(true,formNewAvatar);
@@ -90,11 +145,11 @@ function formEditAvatar(evt) {
       loading(false,formNewAvatar);
     })  
 };
-formNewAvatar.addEventListener('submit', formEditAvatar); 
+formNewAvatar.addEventListener('submit', handleAvatarFormSubmit); 
 
 
 //--Отправка формы изменения данных аккаунта
-function formEditSubmit(evt) {
+function handleInfoFormSubmit(evt) {
     evt.preventDefault();
 
     const info = {
@@ -114,8 +169,9 @@ function formEditSubmit(evt) {
         loading(false,formEdit);
       })
 }
+
 //--Прикрепляем обработчик к форме
-formEdit.addEventListener('submit', formEditSubmit); 
+formEdit.addEventListener('submit', handleInfoFormSubmit); 
 
 //--Отправка формы добавления карточки
 formNewCard.addEventListener('submit', function(evt) {
@@ -127,11 +183,11 @@ formNewCard.addEventListener('submit', function(evt) {
 
   uploadUserCard(card)
     .then(NewCard => {
-      cardList.prepend(createCard(NewCard, deleteCard, cardLike, openImage, myId, popupDeleteCard));
+      cardList.prepend(createCard(NewCard, likeCard, openImage, myId, openPopupDeleteCard));
       closeModal(popupNewCard);
     })
     .catch(err => {
-      console.log(err)
+      console.log(err);
     })
     .finally(() => {
       loading(false,formNewCard);
@@ -146,36 +202,16 @@ btnEdit.addEventListener('click',function(){
   clearValidation(popupEdit, validationConfig);
 });
 
-btnClosePopupEdit.addEventListener('click',function(){
-  closeModal(popupEdit);
-});
-
-
 btnAddCard.addEventListener('click', function(){
   openModal(popupNewCard);
   formNewCard.reset();
-});
-
-btnClosePopupNewCard.addEventListener('click', function(){
-    closeModal(popupNewCard);
-    clearValidation(popupNewCard, validationConfig);
-});
-
-btnClosePopupImage.addEventListener('click', function(){
-    closeModal(popupOpenImage);
+  clearValidation(popupNewCard, validationConfig);
 });
 
 iconEditAvatar.addEventListener('click', function() {
   openModal(popupNewAvatar);
   formNewAvatar.reset();
-});
-
-btnClosePopupAvatar.addEventListener('click', function() {
-  closeModal(popupNewAvatar);
-});
-
-btnClosePopupDeleteCard.addEventListener('click', function() {
-  closeModal(popupDeleteCard);
+  clearValidation(popupNewAvatar, validationConfig);
 });
 
     //--Добавление информации с сервера и карточек

@@ -72,9 +72,6 @@ function clearValidation(formElement, validationConfig) {
   inputListClear.forEach((inputElement) =>{
     hideInputError(formElement, inputElement, validationConfig);
     toggleButtonState(inputListClear, buttonElement, validationConfig);
-    // inputElement.addEventListener('input', function (evt) {
-    //   console.log(evt.target.validity);
-    // });
   });
 };
 

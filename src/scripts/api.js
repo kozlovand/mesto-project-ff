@@ -15,19 +15,23 @@ function checkAnswer(res) {
   return Promise.reject(`Ошибка: ${res.status}`);
 }
 
+
+function request(url, options) {
+// принимает два аргумента: урл и объект опций, как и `fetch`
+  return fetch(url, options).then(checkAnswer)
+}
+  
+
 //--Загрузка информации пользователя с сервера
 export const loadUserInfo = function() {
-  return fetch(`${config.baseUrl}/users/me`, {
+  return request(`${config.baseUrl}/users/me`, {
     headers: config.headers
   })
-    .then(res => {
-       return checkAnswer(res)
-    })
 };
 
 //--загрузка информации пользователя на сервер
 export const uploadUserInfo = function(info){
-  return fetch(`${config.baseUrl}/users/me`, {
+  return request(`${config.baseUrl}/users/me`, {
     method: 'PATCH',
     headers: config.headers,
     body: JSON.stringify({
@@ -35,24 +39,18 @@ export const uploadUserInfo = function(info){
       about: info.about,
     })
   })
-  .then(res => {
-    return checkAnswer(res)
-  });
 } 
 
 //--Загрузка карточек с сервера
 export const getUserCards = function() {
-  return fetch(`${config.baseUrl}/cards`, {
+  return request(`${config.baseUrl}/cards`, {
     headers: config.headers
   })
-    .then(res => {
-      return checkAnswer(res)
- })
 }
 
 //--Загрузка карточки на сервер
 export const uploadUserCard = function(card) {
-  return fetch(`${config.baseUrl}/cards`, {
+  return request(`${config.baseUrl}/cards`, {
     method: 'POST',
     headers: config.headers,
     body: JSON.stringify({
@@ -60,62 +58,44 @@ export const uploadUserCard = function(card) {
       link: card.link,
     })
   })
-    .then(res => {
-      return checkAnswer(res)
-    })
 }
 
 //--Удаление карточки с сервера
 export const deleteUserCard = function(card) {
-  return fetch(`${config.baseUrl}/cards/${card._id}`, {
+  return request(`${config.baseUrl}/cards/${card._id}`, {
     method: 'DELETE',
     headers: config.headers
-  })
-  .then(res => {
-    return checkAnswer(res)
-  })
-  .catch(err => {
-    console.log(err)
   })
 };
 
 //--Отправка лайка карточки на сервер
 export const likeUserCard = function(card) {
-  return fetch(`${config.baseUrl}/cards/likes/${card._id}`, {
+  return request(`${config.baseUrl}/cards/likes/${card._id}`, {
     method: 'PUT',
     headers: config.headers,
     body: JSON.stringify({
       likes: card.likes,
     })
   })
-  .then(res => {
-    return checkAnswer(res)
-  })
 };
 
 //--Удаление лайка карточки с сервера
 export const deletelikeUserCard = function(card) {
-  return fetch(`${config.baseUrl}/cards/likes/${card._id}`, {
+  return request(`${config.baseUrl}/cards/likes/${card._id}`, {
     method: 'DELETE',
     headers: config.headers
-  })
-  .then(res => {
-    return checkAnswer(res)
   })
 };
 
 //--Отправка аватара на сервер
 export const uploadUseravatar = function(avatar) {
-  return fetch(`${config.baseUrl}/users/me/avatar`, {
+  return request(`${config.baseUrl}/users/me/avatar`, {
     method: 'PATCH',
     headers: config.headers,
     body: JSON.stringify({
       avatar: avatar,
     })
   })
-    .then(res => {
-      return checkAnswer(res)
-    });
 }
 
 

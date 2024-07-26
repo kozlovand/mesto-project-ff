@@ -12,6 +12,7 @@ export {openModal, closeModal, closePupupEsc, closePopupOverlay};
     popup.classList.remove('popup_is-opened');
     document.removeEventListener('keydown', closePupupEsc);
     popup.removeEventListener('click', closePopupOverlay);
+    
   };
 
 //--Закрытие на Esc
